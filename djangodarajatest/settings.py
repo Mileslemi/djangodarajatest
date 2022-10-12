@@ -129,5 +129,10 @@ MPESA_CONSUMER_KEY = 'tE2TtoksmeqnUBAFHYp1hXjRscglhq34'
 MPESA_CONSUMER_SECRET = 'p7oAErjXZPQlqhMw'
 
 MPESA_EXPRESS_SHORTCODE = '174379'
+TRANSACTION_TYPE = 'CustomerBuyGoodsOnline'
+TRANSACTION_DESCRIPTION = 'Payment of x'
+ACCOUNT_REFERENCE = 'CompanyLTD'
+API_RESOURCE_URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+ACCESS_TOKEN_URL = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
 MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
