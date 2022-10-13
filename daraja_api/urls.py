@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('',views.getRoutes),
-    path('generateAcessToken/',views.viewAccessToken),
+    path('generateAcessToken/',views.viewTokenPassword),
+    path('stk_push/', views.make_payment)
 ]
