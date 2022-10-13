@@ -129,7 +129,7 @@ MPESA_CONSUMER_KEY = 'tE2TtoksmeqnUBAFHYp1hXjRscglhq34'
 MPESA_CONSUMER_SECRET = 'p7oAErjXZPQlqhMw'
 
 MPESA_EXPRESS_SHORTCODE = '174379'
-TRANSACTION_TYPE = 'CustomerBuyGoodsOnline'
+TRANSACTION_TYPE = 'CustomerPayBillOnline'
 TRANSACTION_DESCRIPTION = 'Payment of x'
 ACCOUNT_REFERENCE = 'CompanyXLTD'
 STK_PUSH_URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'

@@ -31,7 +31,7 @@ def generate_password(date):
     # (The base64 string is a combination of Shortcode+Passkey+Timestamp)
     
     thePassword = settings.MPESA_EXPRESS_SHORTCODE + settings.MPESA_PASSKEY + date
-    encodedPass = base64.b64encode(thePassword.encode())
+    encodedPass = base64.b64encode(thePassword.encode('ascii'))
     decodedPass = encodedPass.decode("utf-8")
     print(decodedPass)
     return decodedPass
