@@ -68,12 +68,20 @@ def stk_push(amount, number):
     # ResponseCode(with 0 meaning successful), CustomerMessage
     # https://developer.safaricom.co.ke/APIs/MpesaExpressSimulate
 
+    #  if an error occurs, maybe callbackurl is invalid, number invalid
+    # you'll receive
+    # {'requestId': '68430-16891732-1', 'errorCode': '400.002.02', 'errorMessage': 'Bad Request - Invalid CallBackURL'}
+    # or
+    # {'requestId': '8454-31397579-1', 'errorCode': '400.002.02', 'errorMessage': 'Bad Request - Invalid PhoneNumber'}
+    # check if jsonResponse has errorCode, if true, then .....
+
     data = {
         "MerchantRequestID":jsonResponse['MerchantRequestID'],
         "CheckoutRequestID":jsonResponse['CheckoutRequestID'],
         "ResponseDescription":jsonResponse['ResponseDescription'],
         "ResponseCode":jsonResponse['ResponseCode'],
     }
+     
 
     return data
 
