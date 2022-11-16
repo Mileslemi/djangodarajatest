@@ -124,15 +124,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MPESA_CONSUMER_KEY = 'tE2TtoksmeqnUBAFHYp1hXjRscglhq34'
-MPESA_CONSUMER_SECRET = 'p7oAErjXZPQlqhMw'
-
-MPESA_EXPRESS_SHORTCODE = '174379'
-TRANSACTION_TYPE = 'CustomerPayBillOnline'
-TRANSACTION_DESCRIPTION = 'Payment of x'
-ACCOUNT_REFERENCE = 'CompanyXLTD'
-STK_PUSH_URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
-ACCESS_TOKEN_URL = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
-CALLBACK_URL = 'https://darajambili.herokuapp.com/express-payment'
-MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'

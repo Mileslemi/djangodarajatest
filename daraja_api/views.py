@@ -39,7 +39,14 @@ def make_payment(request):
     # valid m-pesa reg number
     phone_number = data['mobile']
     response = stk_push(amount=amount,number=phone_number)
-    # on successful pay, what is sent to your callbackurl is and ResultCode=0
+    print("response: %s" %response)
+
+    if 'errorMessage' in response:
+        print('error has definately occured')
+    elif response['ResponseCode'] != '0':
+        print('stk_push unsuccessful')
+
+    # on successful pay, what is sent to your callbackurl is: and ResultCode=0
     # {"Body":
     #  {"stkCallback":
     #   {"MerchantRequestID":"98358-32664279-1",

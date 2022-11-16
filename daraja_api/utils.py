@@ -3,18 +3,28 @@ from urllib import response
 import requests
 from requests import auth
 from requests.auth import HTTPBasicAuth
-from django.conf import settings
 from datetime import datetime
+from decouple import config
+from . import exceptions
 
 import base64
 
 def generate_access_token():
-    results = requests.get(settings.ACCESS_TOKEN_URL, auth=HTTPBasicAuth(settings.MPESA_CONSUMER_KEY,settings.MPESA_CONSUMER_SECRET))
-    response = results.json()
-    # if successful - response is json of expiry_in, access_token
-    print(response)
-    access_token = response["access_token"]
-    return access_token
+    try:
+        results = requests.get(config('ACCESS_TOKEN_URL'), auth=HTTPBasicAuth(config('MPESA_CONSUMER_KEY'),config('MPESA_CONSUMER_SECRET')))
+        print("status Code:" + str(results.status_code))
+        if results.status_code != 200:
+            raise exceptions.MpesaError('Failed to generate Access token')
+        else:  
+            response = results.json()
+            # if successful - response is json of expiry_in, access_token
+            print(response)
+            access_token = response["access_token"]
+            return access_token
+    except requests.exceptions.ConnectionError:
+        raise exceptions.MpesaConnectionError("Connection Failed")
+    except Exception:
+        raise exceptions.GeneralException("Access error!")
 
 def get_current_time():
     current_time = datetime.now()
@@ -30,7 +40,7 @@ def generate_password(date):
     #  A base64 encoded string. 
     # (The base64 string is a combination of Shortcode+Passkey+Timestamp)
     
-    thePassword = settings.MPESA_EXPRESS_SHORTCODE + settings.MPESA_PASSKEY + date
+    thePassword = config('MPESA_EXPRESS_SHORTCODE') + config('MPESA_PASSKEY') + date
     encodedPass = base64.b64encode(thePassword.encode('ascii'))
     decodedPass = encodedPass.decode("utf-8")
     print(decodedPass)
@@ -44,20 +54,20 @@ def stk_push(amount, number):
     headers = {"Authorization":"Bearer %s" % access_token}
     # parameter required are in https://developer.safaricom.co.ke/APIs/MpesaExpressSimulate
     json_parameters = {
-        'BusinessShortCode':settings.MPESA_EXPRESS_SHORTCODE,
+        'BusinessShortCode':config('MPESA_EXPRESS_SHORTCODE'),
         'Password':password,
         'Timestamp':timeStamp,
-        'TransactionType':settings.TRANSACTION_TYPE,
+        'TransactionType':config('TRANSACTION_TYPE'),
         'Amount':amount,
         'PartyA':number,
-        'PartyB':settings.MPESA_EXPRESS_SHORTCODE,
+        'PartyB':config('MPESA_EXPRESS_SHORTCODE'),
         'PhoneNumber':number,
-        'CallBackURL':settings.CALLBACK_URL,
-        'AccountReference':settings.ACCOUNT_REFERENCE,
-        'TransactionDesc':settings.TRANSACTION_DESCRIPTION,
+        'CallBackURL':config('CALLBACK_URL'),
+        'AccountReference':config('ACCOUNT_REFERENCE'),
+        'TransactionDesc':config('TRANSACTION_DESCRIPTION'),
     }
 
-    response = requests.post(settings.STK_PUSH_URL, json=json_parameters,headers=headers)
+    response = requests.post(config('STK_PUSH_URL'), json=json_parameters,headers=headers)
 
     responseString = response.text
     print(responseString)
@@ -65,7 +75,7 @@ def stk_push(amount, number):
     print(jsonResponse)
     # if stk push successful, you'll get a response with 
     # MerchantRequestID, CheckoutRequestID, ResponseDescription
-    # ResponseCode(with 0 meaning successful), CustomerMessage
+    # ResponseCode(with 0 meaning successful, any other - error occured), CustomerMessage
     # https://developer.safaricom.co.ke/APIs/MpesaExpressSimulate
 
     #  if an error occurs, maybe callbackurl is invalid, number invalid
@@ -75,12 +85,19 @@ def stk_push(amount, number):
     # {'requestId': '8454-31397579-1', 'errorCode': '400.002.02', 'errorMessage': 'Bad Request - Invalid PhoneNumber'}
     # check if jsonResponse has errorCode, if true, then .....
 
-    data = {
-        "MerchantRequestID":jsonResponse['MerchantRequestID'],
-        "CheckoutRequestID":jsonResponse['CheckoutRequestID'],
-        "ResponseDescription":jsonResponse['ResponseDescription'],
-        "ResponseCode":jsonResponse['ResponseCode'],
-    }
+    if 'errorCode' in jsonResponse:
+        #   checking if key-errorCode exists in jsonResponse
+        # if true error has occured
+        data = {
+            "errorMessage":jsonResponse['errorMessage'],
+        }
+    else:
+        data = {
+            "MerchantRequestID":jsonResponse['MerchantRequestID'],
+            "CheckoutRequestID":jsonResponse['CheckoutRequestID'],
+            "ResponseDescription":jsonResponse['ResponseDescription'],
+            "ResponseCode":jsonResponse['ResponseCode'],
+        }
      
 
     return data
